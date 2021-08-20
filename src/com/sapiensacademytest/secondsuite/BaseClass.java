@@ -1,4 +1,4 @@
-package com.sapiensacademytest.firstsuite;
+package com.sapiensacademytest.secondsuite;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -14,32 +14,36 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
-public class CCartItems {
 
-	public static void main(String[] args) throws InterruptedException {
-		
-		/* Variables a usar en mi automatizacion
-		 * Acá están las variables de todo el caso de prueba
-		 */
-		int cantidadLista;
-		int numeroAlAzar;
-		List <Integer> productosAlAzar = new ArrayList<Integer>();
-		double totalProductos = 0;
-		String mensajeDeVentana = new String();
-		String mensajeCarrito = new String();		
-		
-		
-		//C001 AÑADIR ARTICULOS AL CARRO DE COMPRA
-		System.setProperty("webdriver.chrome.driver", "D:\\driversParaNavegadores\\chromedriver.exe");
-		WebDriver customDriver = new ChromeDriver();
-		
-		//Objeto para crear la expera en la pagina
-		WebDriverWait espera = new WebDriverWait(customDriver, 20);
-		
+public class BaseClass {
+	/* Variables a usar en mi automatizacion
+	 * Acá están las variables de todo el caso de prueba
+	 */
+	int cantidadLista;
+	int numeroAlAzar;
+	List <Integer> productosAlAzar = new ArrayList<Integer>();
+	double totalProductos = 0;
+	String mensajeDeVentana = new String();
+	String mensajeCarrito = new String();
+	WebDriver customDriver = new ChromeDriver();
+	
+	
+	
+	@BeforeClass
+	public void init() {
 		customDriver.get("http://automationpractice.com/index.php");
 		Dimension driverSize = new Dimension(1170,700);
 		customDriver.manage().window().setSize(driverSize);
+	}
+	
+	
+	@Test
+	public void anadirArticulosCarritoDeCompra() throws InterruptedException {
+		WebDriverWait espera = new WebDriverWait(customDriver, 20);
 		Assert.assertEquals(customDriver.getTitle(), "My Store");
 		WebElement contenedorProductos = customDriver.findElement(By.id("homefeatured"));
 		List<WebElement> listaDeProductos = contenedorProductos.findElements(By.tagName("li"));
@@ -103,23 +107,13 @@ public class CCartItems {
 		Assert.assertEquals(customDriver.findElement(By.xpath("//*[@id=\"header\"]/div[3]/div/div/div[3]/div/div/div/div/div/div[2]/span[1]")).getText(), totalEnString);
 		WebElement botonCheckout = espera.until(ExpectedConditions.visibilityOfElementLocated(By.id("button_order_cart")));
 		
-		//C002 Verificar el proceso de Checkout del carrito de compras
-		customDriver.findElement(By.id("button_order_cart")).click();
-		//Comprobaciones
-		Assert.assertEquals(customDriver.getTitle(), "Order - My Store");
-		Assert.assertEquals(customDriver.findElement(By.className("page-heading")).getText().substring(0,21), "SHOPPING-CART SUMMARY");
-		mensajeCarrito = mensajeCarrito.replace("Cart", "Your shopping cart contains:");
-		Assert.assertEquals(customDriver.findElement(By.className("heading-counter")).getText(), mensajeCarrito);
-		Assert.assertEquals(customDriver.findElement(By.xpath("//*[@id=\"total_price\"]")).getText(), totalEnString);
-		customDriver.findElement(By.xpath("//*[@id=\"center_column\"]/p[2]/a[1]")).click();
-		Assert.assertEquals(customDriver.getTitle(), "Login - My Store");
-/*		Assert.assertEquals(customDriver.getTitle(), "Order - My Store");
-		Assert.assertEquals(customDriver.getTitle(), "Order - My Store");
-		Assert.assertEquals(customDriver.getTitle(), "Order - My Store");
-		Assert.assertEquals(customDriver.getTitle(), "Order - My Store");
-		Assert.assertEquals(customDriver.getTitle(), "Order - My Store");
-		Assert.assertEquals(customDriver.getTitle(), "Order - My Store"); */
-		
+	}
+	
+	
+	
+	@AfterClass
+	public void cerrarNavegador() {
 		customDriver.close();
 	}
+
 }
